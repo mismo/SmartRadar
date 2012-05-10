@@ -9,6 +9,12 @@ Works where Raphael.js works.
 
 [Demos](http://mismo.github.com/SmartRadar)
 
+![demo1](http://mismo.github.com/SmartRadar/img/simple.png)
+
+![demo2](http://mismo.github.com/SmartRadar/img/basic.png)
+
+![demo3](http://mismo.github.com/SmartRadar/img/complex.png)
+
 ## Tests
 
 [Test](http://mismo.github.com/SmartRadar/test_full)
