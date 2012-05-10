@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>简单的示例</title>
+<link href="css/demo.css" rel="stylesheet" type="text/css" />
+<script type="text/javascript" src="../lib/raphael-min.js"></script>
+<script type="text/javascript" src="../dist/smart_radar.js"></script>
+<script type="text/javascript">
+	function init() {
+		var paper = Raphael('holder', 515, 445), values = [ 80, 150, 60, 90, 50, 122, 31, 170 ];
+		var options = {
+			centerX : 255,
+			centerY : 220,
+			members : [ 'USA', 'Canada', 'Sweden', 'Ukraine', 'Uzbekistan', 'Russia', 'Belarus',
+					'Germany' ]
+		};
+		var radar = paper.smartRadar(options, values);
+		document.body.onunload = function() {
+			if (radar) {
+				radar.destroy();
+			}
+			paper = values = options = radar = null;
+		}
+	}
+</script>
+</head>
+<body onload="init();">
+	<div>
+		<h3>
+			SmartRadar示例&nbsp;[&nbsp;<a href="demos.html">返回</a>&nbsp;]
+		</h3>
+		<table class="tbl">
+			<colgroup>
+				<col width="80px" style="background-color: #EEE;">
+				<col>
+			</colgroup>
+			<tr>
+				<td>示例名称：</td>
+				<td>简单的示例</td>
+			</tr>
+			<tr>
+				<td>示例描述：</td>
+				<td>
+					<div>基本全部使用默认的设置。</div>
+					<div>默认设置中所有“指标”使用相同的Y轴，即各Y轴的最小值(0)、最大值(200)皆一致。</div>
+				</td>
+			</tr>
+			<tr>
+				<td>示例效果：</td>
+				<td><div id="holder"></div></td>
+			</tr>
+			<tr>
+				<td>示例代码：</td>
+				<td>
+					<div class="code">
+						<pre>
+var paper = Raphael('holder', 515, 445), values = [ 80, 150, 60, 90, 50, 122, 31, 170 ], options = {
+	centerX : 255, centerY : 220,
+	members : [ 'USA', 'Canada', 'Sweden', 'Ukraine', 'Uzbekistan', 'Russia', 'Belarus', 'Germany' ]
+};
+paper.smartRadar(options, values);</pre>
+					</div>
+				</td>
+			</tr>
+		</table>
+	</div>
+</body>
+</html>

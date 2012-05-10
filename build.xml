@@ -1,0 +1,73 @@
+<project name="smart_radar" default="all" basedir=".">
+
+	<loadfile property="version" srcfile="version.txt" />
+	<property name="prefix" value="." />
+	<property name="dist" value="${prefix}/dist" description="Folder for release" />
+	<property name="tools" value="${prefix}/tools" />
+
+	<property name="out_name" value="${ant.project.name}" />
+	<property name="out_file" value="${dist}/${out_name}.js" />
+	<property name="out_debug_name" value="${ant.project.name}_debug" />
+	<property name="out_debug_file" value="${dist}/${out_debug_name}.js" />
+
+	<target name="all" depends="clean,build,lint,min" />
+
+	<target name="init">
+		<tstamp>
+			<format property="date" pattern="yyyy-MM-dd HH:mm:ss" />
+		</tstamp>
+	</target>
+
+	<target name="build" depends="init"
+		description="Main build, concatenates source files">
+		<echo message="Building ${out_debug_file}" />
+		<mkdir dir="${dist}" />
+		<concat destfile="${out_debug_file}">
+			<fileset file="src/SmartRadar.js" />
+		</concat>
+		<replaceregexp match="@VERSION" replace="${version}"
+			flags="g" byline="true" file="${out_debug_file}" />
+		<replaceregexp match="@DATE" replace="${date}" file="${out_debug_file}" />
+		<echo message="${out_debug_file} built." />
+	</target>
+
+	<target name="lint" depends="build" description="Check source against JSLint">
+		<exec executable="java">
+			<arg line="-jar ${tools}/lib/js.jar ${tools}/jslint-check.js" />
+		</exec>
+	</target>
+
+	<target name="min" depends="build" description="Remove all comments and whitespace">
+		<echo message="Building ${out_file}" />
+		<apply executable="java" parallel="false" verbose="true" dest="${dist}">
+			<fileset dir="${dist}">
+				<include name="${out_debug_name}.js" />
+			</fileset>
+			<arg line="-jar" />
+			<arg path="${tools}/lib/google-compiler-20100917.jar" />
+			<arg value="--warning_level" />
+			<arg value="QUIET" />
+			<arg value="--js_output_file" />
+			<targetfile />
+			<arg value="--js" />
+			<mapper type="glob" from="${out_debug_name}.js" to="tmpmin" />
+		</apply>
+		<concat destfile="${out_file}">
+			<filelist files="${out_debug_file}, ${dist}/tmpmin" />
+			<filterchain>
+				<headfilter lines="6" />
+			</filterchain>
+		</concat>
+		<concat destfile="${out_file}" append="yes">
+			<filelist files="${dist}/tmpmin" />
+		</concat>
+		<replaceregexp match="@DEBUG" replace="" file="${out_file}" />
+		<delete file="${dist}/tmpmin" />
+		<echo message="${out_file} built." />
+	</target>
+
+	<target name="clean">
+		<delete dir="${dist}" />
+	</target>
+
+</project>
