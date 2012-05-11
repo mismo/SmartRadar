@@ -132,6 +132,9 @@
 			// 雷达半径(线)的边框宽度
 			armStrokeWidth : 1,
 
+			// 指标值连线的填充颜色不透明度
+			pathFillOpacity : 1,
+
 			// 指标值连线的填充颜色
 			pathFill : 'none',
 
@@ -940,7 +943,7 @@
 	 * 计算指标值圆点的连接线
 	 */
 	SmartRadar.prototype._calcValueLines = function(points) {
-		var t = this, paper = t.paper, opts = t.options, pathData = [], len, i, point;
+		var t = this, paper = t.paper, opts = t.options, pathData = [], len, i, point, attr;
 		for (i = 0, len = points.length; i < len; i++) {
 			point = points[i];
 			pathData.push(i === 0 ? 'M' : 'L');
@@ -948,14 +951,18 @@
 			pathData.push(point.y);
 		}
 		pathData.push('Z');
+		attr = {
+			'fill' : opts.pathFill,
+			'stroke' : opts.pathStroke,
+			'stroke-width' : opts.pathStrokeWidth,
+			'stroke-linejoin' : 'round'
+		};
+		if (opts.pathFillOpacity !== 1) {
+			attr['fill-opacity'] = opts.pathFillOpacity;
+		}
 		return {
 			path : pathData.join(','),
-			attr : {
-				'fill' : opts.pathFill,
-				'stroke' : opts.pathStroke,
-				'stroke-width' : opts.pathStrokeWidth,
-				'stroke-linejoin' : 'round'
-			}
+			attr : attr
 		};
 	};
 
