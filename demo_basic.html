@@ -14,7 +14,8 @@
 			centerX : 300,
 			centerY : 200,
 			pathStroke : '#0080FF',
-			pathFill : (-[ 1, ]) ? 'rgba(0,20,220,0.3)' : 'none',
+			pathFill : 'rgba(0,20,220)',
+			pathFillOpacity : 0.3,
 			valuePointClickHandler : function(rowData, point, elem, ev, x, y) {
 				alert(rowData.join(', '));
 			},
@@ -99,7 +100,8 @@ var options = {
 	centerX : 300,
 	centerY : 200,
 	pathStroke : '#0080FF',
-	pathFill : (-[1,]) ? 'rgba(0,20,220,0.3)' : 'none',
+	pathFill : 'rgba(0,20,220)',
+	pathFillOpacity : 0.3,
 	valuePointClickHandler : function(rowData, point, elem, ev, x, y) {
 		alert(rowData.join(', '));
 	},
