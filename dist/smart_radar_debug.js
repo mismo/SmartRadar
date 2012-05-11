@@ -2,7 +2,7 @@
  * SmartRadar chart, based on Raphael.js
  *
  * Version: 0.0.1pre
- * Date: 2012-05-11 15:05:12
+ * Date: 2012-05-11 17:33:27
  */
 (function(R, UNDEF) {
 	var exportName = 'smartRadar', log = function(msg) {
@@ -1059,6 +1059,7 @@
 			// 只画“指标名称”或只画“指标值”时重叠相对少，直接忽略
 			return;
 		}
+		var numPos = opts.valueNumberPostion, isUnder = 'under_label' === numPos;
 		var items = [], callback = function(item, index) {
 			var point = item.data('point');
 			if (point && 'angle' in point) {
@@ -1067,13 +1068,40 @@
 			items.push(item);
 		}, sortByAngle = function(els, dir) {
 			return els.sort(function(a1, a2) {
-				var angle1 = a1.data('angle'), angle2 = a2.data('angle'), r = 100;
-				var p1 = t.getPosition(r, angle1), p2 = t.getPosition(r, angle2);
-				return dir === 'V' ? (p1.y - p2.y) : (p1.x - p2.x);
+				var angle1 = a1.data('angle'), angle2 = a2.data('angle');
+				var isV = dir === 'V', r = 100, offset = 0.001, p1, p2;
+				p1 = t.getPosition(r, angle1);
+				if (isV && a1.data('point')) {
+					// Y轴方向加上修正值，防止“指标名称”和“指标值”算出来的Y值相等从而影响排序
+					// 使“指标值”在垂直方向位于“指标名称”下方
+					p1.y += offset;
+				}
+				p2 = t.getPosition(r, angle2);
+				if (isV && a2.data('point')) {
+					p2.y += offset;
+				}
+				return isV ? (p1.y - p2.y) : (p1.x - p2.x);
 			});
 		}, fix = function(els, dir) {
-			var prop = dir === 'V' ? 'y' : 'x', pv, len, i, j, box1, box2;
+			var isV = dir === 'V', prop = isV ? 'y' : 'x', pv, len, i, j, box1, box2, angle, offset;
 			els = sortByAngle(els, dir);
+
+			// "under_label"时，最上方的“指标名称”和“指标值”应该都不与雷达辐射区域重叠
+			if (isUnder && isV && els.length > 0) {
+				box1 = els[0].getBBox();
+				angle = els[0].data('angle');
+				for (i = 1, len = els.length; i < len; i++) {
+					if (els[i].data('angle') === angle) {
+						box2 = els[i].getBBox();
+						offset = box2.y - box1.y;
+						pv = t.getPosition(store.outerRadius, angle).y - 10;
+						els[i].attr('y', pv);
+						els[0].attr('y', pv - offset);
+						break;
+					}
+				}
+			}
+
 			for (i = 0, len = els.length; i < len - 1; i++) {
 				box1 = els[i].getBBox();
 				for (j = i + 1; j < len; j++) {
