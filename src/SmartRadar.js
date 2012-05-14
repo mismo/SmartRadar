@@ -794,7 +794,7 @@
 
 		if (R.is(values, 'array')) { // array belongs object, check array first
 			values = format(values, values);
-		} else if (R.is(values, 'object')) {
+		} else if (values && R.is(values, 'object')) {
 			values = format(values, values.data, values.valueColIndex, values.memberColIndex,
 					values.categoryColIndex, values.displayValueColIndex);
 		}
